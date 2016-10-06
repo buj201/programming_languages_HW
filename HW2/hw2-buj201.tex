@@ -1,0 +1,537 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{mathtools} %More math! (For dscases)
+\usepackage{hyperref} %HTML package
+\usepackage{tikz} %Also tikz?
+\usepackage{bm} %makes vectors bold
+\usepackage{bbm} %Blackboard bold 1
+\usepackage{graphicx} %import pics
+
+\usepackage[noend]{algpseudocode} %Algorithms
+\usepackage{algorithm}
+
+\graphicspath{ {Python\_figs/} }
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{ \normalfont\scshape} % Make all sections the default font and small caps
+
+
+\renewcommand{\thesubsection}{\alph{subsection}} %Make subsections start with letters
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{placeins}
+\usetikzlibrary{shapes.multipart,matrix,positioning}
+
+\usepackage{listings}
+\lstset{tabsize=2,basicstyle=\ttfamily}
+
+\usepackage{cancel}
+\usepackage[most]{tcolorbox}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{Assignment 2}
+
+\author{Benjamin Jakubowski} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Bindings and Nested Subprograms}
+
+Consider the program 
+
+\begin{lstlisting}
+program main:
+	var a, b : integer;
+	
+	procedure sub1;
+		var x , y : integer;
+		begin {sub1} 
+		...
+		end; {sub1}
+	
+	procedure sub2;
+		var x , y : integer;
+	
+		procedure sub3;
+			var y, a: integer;
+			begin {sub3} 
+			...
+			end; {sub3}
+		begin {sub2}
+		end; {sub2}
+
+	begin {main}
+	...
+	end {main}
+	
+\end{lstlisting}
+
+Assuming static scoping is used, the table below lists all the variables, along with the program units where they are declared, that are visible in the bodies of sub1, sub2, and sub3.
+
+\begin{center}
+\begin{tabular}{ | c | c | c | }
+	\hline
+	Unit & Var & Where Declared \\
+	\hline
+	\texttt{sub1} & \begin{tabular}{ c } \texttt{x, y} \\ \texttt{a, b} \end{tabular} & \begin{tabular}{ c } \texttt{sub1} \\ \texttt{main} \end{tabular} \\
+	\hline
+	\texttt{sub2} & \begin{tabular}{ c} \texttt{a} \\ \texttt{x, b, t} \end{tabular} & \begin{tabular}{ c } \texttt{main} \\ \texttt{sub2} \end{tabular} \\
+	\hline
+	\texttt{sub3} & \begin{tabular}{ c } \texttt{x, b, t} \\ \texttt{y, a} \end{tabular} & \begin{tabular}{ c } \texttt{sub2} \\ \texttt{sub3} \end{tabular} \\
+	\hline
+\end{tabular}
+\end{center}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+\section{Bindings and Nested Subprograms}
+
+Consider the program 
+
+\begin{lstlisting}
+procedure outer ( ) is
+	b : integer = 3;
+	
+	procedure inner ( c : integer ) is
+		d : boolean = False;
+		
+		procedure innermost ( e : integer ) is
+			b : real = 3.14;
+			f : integer = -50 ;
+	
+		begin
+			f = f + 10;
+			
+			if e == 0 then
+				print b, c, d, f;
+			else
+				innermost(e-1);
+			end if;
+			
+	begin
+		innermost(c);
+	end;
+
+begin
+	inner(b);
+end
+	
+\end{lstlisting}
+
+The runtime stack for this program (assuming a function \texttt{main} calls \texttt{outer()}) is shown below.
+
+%--------BEGINNIN A BUNCH OF BOXES FOR THE STACK DIAGRAM-----------%
+
+\newsavebox{\callone}
+\sbox{\callone}{
+main()
+}
+
+\newsavebox{\calltwo}
+\sbox{\calltwo}{
+\begin{tabular}{c c}
+outer() & b = 3
+\end{tabular}
+}
+
+\newsavebox{\callthree}
+\sbox{\callthree}{
+\begin{tabular}{c c}
+inner(c = 3) & 
+	\begin{tabular}{c}
+	c = 3 \\
+	d = False
+	\end{tabular}
+\end{tabular}
+}
+
+\newsavebox{\callfour}
+\sbox{\callfour}{
+\begin{tabular}{c c}
+innermost(e = 3) & 
+	\begin{tabular}{c}
+	e = 3 \\
+	b = 3.14 \\
+	f = \cancel{-50} = -40
+	\end{tabular}
+\end{tabular}
+}
+
+\newsavebox{\callfive}
+\sbox{\callfive}{
+\begin{tabular}{c c}
+innermost(e = 2) & 
+	\begin{tabular}{c}
+	e = 2 \\
+	b = 3.14 \\
+	f = \cancel{-50} = -40
+	\end{tabular}
+\end{tabular}
+}
+
+\newsavebox{\callsix}
+\sbox{\callsix}{
+\begin{tabular}{c c}
+innermost( e  = 1) & 
+	\begin{tabular}{c}
+	e = 1 \\
+	b = 3.14 \\
+	f = \cancel{-50} = -40
+	\end{tabular}
+\end{tabular}
+}
+
+\newsavebox{\callseven}
+\sbox{\callseven}{
+\begin{tabular}{c c}
+innermost(e = 0) & 
+	\begin{tabular}{c}
+	e = 0 \\
+	b = 3.14 \\
+	f = \cancel{-50} = -40
+	\end{tabular}
+\end{tabular}
+}
+
+
+%--------END OF A BUNCH OF BOXES FOR THE STACK DIAGRAM-----------%
+
+\begin{tikzpicture}
+\matrix (A) [matrix of nodes, ampersand replacement=\&,nodes={draw, minimum size=.65cm, text width=7cm,align=center}] at (0,1)
+{
+{\usebox{\callone}} \\
+{\usebox{\calltwo}} \\
+{\usebox{\callthree}} \\
+{\usebox{\callfour}} \\
+{\usebox{\callfive}} \\
+{\usebox{\callsix}} \\
+{\usebox{\callseven}} \\
+};
+\matrix (B) [matrix of nodes, ampersand replacement=\&,nodes={draw, minimum size=.65cm, text width=2cm,align=center}] at (7,1)
+{
+b\\
+c\\
+d\\
+e\\
+f\\
+};
+
+\draw[<-] (A-7-1.east) -- (B-5-1.west);
+\draw[<-] (A-7-1.east) -- (B-4-1.west);
+\draw[<-] (A-3-1.east) -- (B-3-1.west);
+\draw[<-] (A-3-1.east) -- (B-2-1.west);
+\draw[<-] (A-7-1.east) -- (B-1-1.west);
+
+\node (C) [below=of A]{Call Stack};
+\node[below= .25cm of B,text width=2cm,align=center]{Display when \texttt{print} called};
+\end{tikzpicture}
+
+Thus, when the \texttt{innermost} base case is reached, the \texttt{print} statement will print
+\begin{center}
+\texttt{3.14, 3, False, 0, -40}
+\end{center}
+
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 3
+%----------------------------------------------------------------------------------------
+\section{Parameter Passing}
+
+Consider the program 
+\lstset{numbers=left,
+  stepnumber=1,    
+  firstnumber=1,
+  numberfirstline=true}
+  
+\begin{tcolorbox}[colback=white,colframe=black,width=\dimexpr\textwidth]
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}
+A[] = { 1, 3, 2, 7 };
+integer i = 0;
+mystery(i, A[i+1])
+
+procedure mystery (a1, a2)
+	integer tmp = 3;
+	
+		for c from 1 to 3 do	// 1 to 3 inclusive
+			for tmp = tmp + a2;
+			a1++;
+		end for;
+
+end procedure;
+\end{lstlisting}
+\end{tabular}
+\end{center}
+\end{tcolorbox}
+
+
+We trace the code under (i) \emph{call-by-name} and (ii) \emph{call-by-value} semantics.
+
+\subsection{\emph{Call-by-value}}
+
+Recall in \emph{call-by-value} formal parameters are bound to the value of arguments. With this in mind, we trace the code (noting \texttt{i} and \texttt{A[i+1]} are bound when \texttt{mystery(i, A[i+1])} is called).\\
+
+\begin{tabular}{| p{0.05\linewidth} | p{0.95\linewidth} |}
+\hline
+	\textbf{Line} & \textbf{State} \\
+\hline
+	3 & Under \emph{call-by-value}, the expressions \texttt{i, A[i+1]} in \texttt{mystery(i, A[i+1])} are immediately evaluated, so the formal parameters \texttt{a1} and \texttt{a2} are defined as \texttt{a1 = i = 0} and \texttt{a2 = A[i + 1] = A[0 + 1] = A[1] = 3}.\\
+\hline
+	4 & \texttt{temp = 3}.\\
+\hline
+	7 & \texttt{c = 1}\\
+\hline
+	8 & \texttt{temp = temp + a2 = 3 + 3 = 6}\\
+\hline
+	9 & \texttt{a1++ = a1 + 1 = 0 + 1 = 1}\\
+\hline
+	7 & \texttt{c = 2}\\
+\hline
+	8 & \texttt{temp = temp + a2 = 6 + 3 = 9}\\
+\hline
+	9 & \texttt{a1++ = a1 + 1 = 1 + 1 = 2}\\
+\hline
+	7 & \texttt{c = 3}\\
+\hline
+	8 & \texttt{temp = 9 + 3 = 5 + 1 = 12}\\
+\hline
+	9 & \texttt{a1++ = a1 + 1 = 2 + 1 = 3}\\
+\hline
+\end{tabular}\\
+
+Thus, the final result is \texttt{temp = 12} and \texttt{i = 0}.
+
+\subsection{\emph{Call-by-name}}
+
+Recall in \emph{call-by-name} formal parameters are bound to the expressions passed to the subprogram, and these expressions are evaluated every time the parameter is referenced. With this in mind, we trace the code.\\
+
+\begin{tabular}{| p{0.05\linewidth} | p{0.95\linewidth} |}
+\hline
+	\textbf{Line} & \textbf{State} \\
+\hline
+	3 & Under \emph{call-by-name}, the formal parameters \texttt{a1} and \texttt{a2} are bound to the passed expression, such that \texttt{a1} is bound to the expression "\texttt{i}" and \texttt{a2} is bound to the expression "\texttt{A[i + 1]}".\\
+\hline
+	4 & \texttt{temp = 3}.\\
+\hline
+	7 & \texttt{c = 1}\\
+\hline
+	8 & \texttt{temp = temp + a2 = 3 + A[i + 1] = 3 + A[0 + 1]  = 3 + A[1] = 3 + 3 = 6}\\
+\hline
+	9 & \texttt{a1++ = i++ = i + 1 = 0 + 1 = 1}\\
+\hline
+	7 & \texttt{c = 2}\\
+\hline
+	8 & \texttt{temp = temp + a2 = 6 + A[i + 1] = 6 + A[1 + 1]  = 6 + A[2] = 6 + 2 = 8}\\
+\hline
+	9 & \texttt{a1++ = i++ = i + 1 = 1 + 1 = 2}\\
+\hline
+	7 & \texttt{c = 3}\\
+\hline
+	8 & \texttt{temp = temp + a2 = 8 + A[i + 1] = 8 + A[2 + 1]  = 8 + A[3] = 8 + 7 = 15}\\
+\hline
+	9 & \texttt{a1++ = i++ = 2 + 1 = 2 + 1 = 3}\\
+\hline
+\end{tabular}
+
+Thus, the final result is \texttt{i = 3} and \texttt{temp = 15}.
+
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 4
+%----------------------------------------------------------------------------------------
+\section{Lambda Calculus}
+
+\subsection{$\beta$ reductions on SKK}
+
+Let S and K stand for the following lambda expressions:
+
+\[S = \lambda x.\lambda y .\lambda z .(xz(yz))\]
+and
+\[K = \lambda x .\lambda y.x\]
+
+We show the composition SKK is equivalent to $\lambda z.z$:
+
+\begin{align*}
+SKK &=  \lambda x.\lambda y .\lambda z .(xz(yz)) K K \\
+	&= \lambda y .\lambda z .(Kz(yz)) K \\
+	&= \lambda z .(Kz(Kz))
+\end{align*}
+
+Next, note
+\begin{align*}
+Kz &= (\lambda x.\lambda y. x) z \\
+	&= \lambda y. z
+\end{align*}
+
+Thus
+\begin{align*}
+SKK &= \lambda z .(Kz(Kz)) \\
+	&= \lambda z .\left(\lambda y. z (\lambda y. z) \right) \\
+	&= \lambda z . z
+\end{align*}
+
+since $\left(\lambda y. z (\lambda y. z) \right) = z$.
+
+\subsection{Reducing an expression two ways}
+
+We reduce the following expression two ways:
+\[(\lambda x. *~x~x ) (+~2~3)\]
+
+\subsubsection{Reduction in applicative-order}
+
+To reduce in applicative order, we first evaluate the arguments, then pass them to the function. Specifically, note $( + 2 3) = 5$. Thus
+\begin{align*}
+(\lambda x. *~x~x ) (+~2~3) (+~2~3) &= (\lambda x. *~x~x ) (5) (5) \\
+	&= (*~5~5 )\\
+	&= 25
+\end{align*}
+
+\subsubsection{Reduction in normal-order}
+
+To reduce in normal order, we pass the expressions directly to the function before they're evaluated. 
+\begin{align*}
+(\lambda x. *~x~x ) (+~2~3) (+~2~3) &= (*(+~2~3)  (+~2~3) )  \\
+	&= (*~5~5 )\\
+	&= 25
+\end{align*}
+
+\subsection{Need for $\alpha$-conversions}
+
+In this section we reduce three lambda expressions.
+
+\subsubsection{$(\lambda xy.yx)(\lambda x.xy)$}
+
+Consider the expression $(\lambda xy.yx)(\lambda x.xy)$. Note $y$ is unbound in $(\lambda x.xy)$ but bound in $(\lambda xy.yx)$; hence $\alpha$-conversion is required:
+
+\begin{align*}
+& (\lambda xy.yx)(\lambda x.xy) \\
+& \qquad{} \rightarrow_\alpha  (\lambda xw.wx)(\lambda x.xy) \\
+& \qquad{} \rightarrow_\beta  (\lambda w. w (\lambda x.xy))
+\end{align*}
+
+Now, if we did not use an $\alpha$-conversion, we would incorrectly obtain the reduced expression:
+
+\begin{align*}
+& (\lambda xy.yx)(\lambda x.xy) \\
+& \qquad{} \rightarrow_\beta  (\lambda y. y (\lambda x.xy))
+\end{align*}
+
+and $(\lambda y. y (\lambda x.xy)) \ne  (\lambda w. w (\lambda x.xy))$.
+
+
+\subsubsection{$(\lambda x.xz)(\lambda xz.xy)$}
+
+Consider the expression $(\lambda x.xz)(\lambda xz.xy)$. Note initially no $\alpha$-conversion is required, since there are no free variables in $(\lambda xz.xy)$ which are bound in $(\lambda x.xz)$.
+
+Thus we proceed with a $\beta$-conversion
+
+\begin{align*}
+& (\lambda x.xz)(\lambda xz.xy) \\
+& \qquad{} \rightarrow_\beta  (\lambda xz.xy) z
+\end{align*}
+
+Now we require an $\alpha$ conversion, since the second $z$ is free while $z$ is bound in $(\lambda xz.xy)$. 
+
+\begin{align*}
+& \qquad{} \rightarrow_\alpha (\lambda xw.xy) z \\
+& \qquad{} \rightarrow_\beta (\lambda w.zy)
+\end{align*}
+
+If we did not use an $alpha$-conversion, we would incorrectly obtain the reduced expression:
+
+\begin{align*}
+& (\lambda x.xz)(\lambda xz.xy) \\
+& \qquad{} \rightarrow_\beta  (\lambda xz.xy) z \\
+& \qquad{} \rightarrow_\beta (\lambda z.zy)
+\end{align*}
+
+and $(\lambda w.zy) \ne  (\lambda z.zy)$.
+
+
+\subsubsection{$(\lambda x.xz)(\lambda x.x)$}
+
+Consider the expression$(\lambda x.xz)(\lambda x.x)$. No $\alpha$-conversion is required, since there are no free variables in $(\lambda x.x)$.
+
+Thus we proceed with a $\beta$-conversion
+
+\begin{align*}
+&(\lambda x.xz)(\lambda x.x) \\
+& \qquad{} \rightarrow_\beta  (\lambda x.x) y \\
+& \qquad{} \rightarrow_\beta  y
+\end{align*}
+
+\subsection{\texttt{PLUS} $\ulcorner 1 \urcorner \ulcorner 1 \urcorner$}
+
+Recall
+\[\texttt{PLUS} = \lambda mnfx . mf (nfx)\]
+\[\ulcorner 1 \urcorner  = \lambda fx.fx\]
+ 
+ So
+\begin{align*}
+\texttt{PLUS} \ulcorner 1 \urcorner \ulcorner 1 \urcorner &= \left(\lambda mnfx . mf (nfx)\right)\left( \lambda fx.fx\right)\left( \lambda fx.fx\right)\\
+	&\rightarrow_\beta \left(\lambda nfx . \left( \lambda fx.fx\right)f (nfx)\right)\left( \lambda fx.fx\right)\\
+	&\rightarrow_\beta \left(\lambda fx . \left( \lambda fx.fx\right)f (\left( \lambda fx.fx\right)fx)\right)\\
+	&\rightarrow_\beta \left(\lambda fx . \left( \lambda fx.fx\right)f (fx)\right)\\
+	&=  \left(\lambda fx . \left(\left( \lambda fx.fx\right)f (fx)\right)\right)\\
+	&\rightarrow_\beta \left(\lambda fx . \left(\left( \lambda x.fx\right)(fx)\right)\right)\\
+	&\rightarrow_\beta \left(\lambda fx . \left(f(fx)\right)\right)\\
+\end{align*}
+%----------------------------------------------------------------------------------------
+
+
+\end{document}

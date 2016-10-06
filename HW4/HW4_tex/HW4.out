@@ -1,0 +1,19 @@
+\BOOKMARK [1][-]{section.1}{Garbage Collection}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Heap pointer allocation method}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Copy collection during BeginEventLoop}{section.1}% 3
+\BOOKMARK [1][-]{section.2}{Prolog}{}% 4
+\BOOKMARK [1][-]{section.3}{Prolog Performance}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Faster query time for goal\(X\)}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Explaining why this ordering improves execution time}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.3}{Adding break sub1\(X\) :- foo\(X\), !}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.4}{Adding break sub2\(X\) :- hello\(X\), !, world\(X\).}{section.3}% 9
+\BOOKMARK [1][-]{section.4}{Unification}{}% 10
+\BOOKMARK [2][-]{subsection.4.1}{d\(15\) \046 c\(X\)}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.2}{a\(X, b\(3, 1, Y\)\) \046 a\(4, Y\)}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.3}{a\(X, c\(2, B, D\)\) \046 a\(4, c\(A, 7, C\)\)}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.4}{a\(X, c\(2, A, X\)\) \046 a\(4, c\(A, 7, C\)\)}{section.4}% 14
+\BOOKMARK [2][-]{subsection.4.5}{e\(c\(2,D\)\) \046 e\(c\(8, D\)\)}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.6}{X \046 e\(f\(6,2\), g\(8, 1\)\)}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.7}{b\(X, g\(8, X\)\) \046 b\(f\(6,2\), g\(8, f\(6,2\)\)\)}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.8}{a\(1, b\(X, Y\)\) \046 a\(Y, b\(2, c\(6, Z\), 10\)\)}{section.4}% 18
+\BOOKMARK [2][-]{subsection.4.9}{d\(c\(1,2,1\)\) \046 d\( c\(X, Y, X\)\)}{section.4}% 19
